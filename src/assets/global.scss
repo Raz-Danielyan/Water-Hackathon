@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
+
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: background-color 5000s ease-in-out 0s;
+}
+.google-map{
+  width: 100%;
+  height: 100%;
+}
+
+ .ant-picker-cell-selected .ant-picker-cell-inner {
+  background: #FF9900 !important;
+  border-radius: 50% !important;
+}
+
+ .ant-picker-cell-in-view .ant-picker-cell-inner:before {
+  border-color: #FF9900 !important;
+}
+
+.ant-modal-root .ant-modal-wrap {
+  z-index: 1005;
+
+  .ant-modal {
+    width: 480px!important;
+
+    @media screen and (max-width: 480px) {
+      width: calc(100vw - 15px) !important;
+    }
+    }
+
+  .ant-modal-content {
+    border-radius: 20px;
+
+    .ant-modal-body {
+      padding: 15px 30px;
+
+      .ant-modal-confirm-title {
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 30px;
+      }
+
+      .ant-modal-confirm-content {
+        margin-top: 15px;
+      }
+
+      .ant-modal-confirm-btns {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        margin-top: 30px;
+
+        .ant-btn {
+          height: 40px;
+          width: 30%;
+          border-radius: 10px;
+
+          &.ant-btn-primary {
+            margin-left: 15px;
+            background-color: #FF9900;
+            border: 1px solid #FF9900;
+            color: #fff;
+
+            &:hover {
+              opacity: .9;
+            }
+          }
+          &.ant-btn-default {
+            &:hover, &:focus {
+              border: 1px solid #FF9900;
+              color: #FF9900;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.drag-project-item{
+  z-index: 100;
+}
+
+.row-dragging .ant-table-cell,
+.mobile-row-dragging .ant-table-cell{
+  padding: 16px 0 0 16px;
+  visibility: hidden;
+  overflow: hidden;
+}
+
+.row-dragging .drag-visible,
+.mobile-row-dragging .drag-visible{
+  visibility: visible;
+  background-color: #fff;
+}
+
+.row-dragging .ant-table-cell:nth-child(2),
+.mobile-row-dragging .ant-table-cell:nth-child(3){
+  width:100% ;
+  & .ant-typography{
+    width: auto;
+  }
+}

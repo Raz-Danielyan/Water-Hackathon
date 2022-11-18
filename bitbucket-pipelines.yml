@@ -1,0 +1,46 @@
+image: node:14
+
+pipelines:
+  branches:
+    dev:
+      - step:
+          name: Build
+          caches:
+            - node
+          script:
+            - npm install
+            - REACT_APP_VERSION="v$(date +%y.%m%d.%H%M)" REACT_APP_ADMIN_URL=$stagingAdminURL REACT_APP_API_ROOT=$stagingAPI REACT_APP_MAIN_URL=$stagingMainURL REACT_APP_RESTAURANT_URL=$stagingRestaurantURL REACT_APP_AUTH_URL=$stagingAuthURL REACT_APP_GOOGLE_API_KEY=$googleAPIKey npm run cbuild
+          artifacts:
+            - build/**
+      - step:
+          name: Deploy to Production
+          script:
+            - pipe: atlassian/rsync-deploy:0.3.2
+              variables:
+                USER: 'root'
+                SERVER: $stagingIP
+                REMOTE_PATH: $stagingPath
+                LOCAL_PATH: 'build'
+    master:
+      - step:
+          name: Build
+          caches:
+            - node
+          script:
+            - npm install
+            - REACT_APP_VERSION="v$(date +%y.%m%d.%H%M)" REACT_APP_API_ROOT=$prodAPI REACT_APP_MAIN_URL=$prodMainURL REACT_APP_RESTAURANT_URL=$prodRestaurantURL REACT_APP_AUTH_URL=$prodAuthURL REACT_APP_GOOGLE_API_KEY=$googleAPIKey npm run build
+          artifacts:
+            - build/**
+      - step:
+          name: Deploy to Production
+          script:
+            - pipe: atlassian/rsync-deploy:0.3.2
+              variables:
+                USER: 'root'
+                SERVER: $prodIP
+                REMOTE_PATH: $prodPath
+                LOCAL_PATH: 'build'
+definitions:
+  services:
+    postgres:
+      image: postgres
