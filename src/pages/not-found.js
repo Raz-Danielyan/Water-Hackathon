@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import routes, { protectedRouts, roleDefPaths } from '../constants/routes';
+import { protectedRouts, roleDefPaths } from '../constants/routes';
 import { getUserRole } from '../app/services/selector-helpers';
 import { Col, Paragraph } from '../components/atoms';
 
@@ -22,7 +22,7 @@ const NotFoundPage = () => {
     protectedRouts.restaurant && protectedRouts.superadmin
       ? [...Object.values(protectedRouts.restaurant), ...Object.values(protectedRouts.superadmin)]
       : [];
-  const containRouteList = [...protectedRoutsValues, ...Object.values(routes)].filter(
+  const containRouteList = protectedRoutsValues.filter(
     el => el?.pathname === `/${pathname?.split('/')?.[1]}`
   );
 

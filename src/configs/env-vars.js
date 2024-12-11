@@ -1,4 +1,4 @@
-export const API_ROOT = process.env.REACT_APP_API_ROOT || 'https://rb.digilabs.ca/';
-// export const GOOGLE_MAPS_KEY = 'AIzaSyAhNnpKjb5NiaxDVf5NNXKZxAOD7sKVx8M';
-// export const GOOGLE_GEOCODEAPI_KEY = 'AIzaSyCPlzUz1_Kxs0bEBVViUzbShKOhqoeFn7Q';
-// export const MOBILE_BREAKPOINT = 992;
+export const API_ROOT =
+  process.env.REACT_APP_API_ROOT ||
+  'http://83.139.3.140:8090/am_swcis_api/api/water_cadastre/v1/permits/';
+export const MAIN_API_ROOT = 'http://83.139.3.140/am_swcis_api';

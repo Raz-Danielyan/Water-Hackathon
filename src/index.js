@@ -3,6 +3,7 @@ import 'react-app-polyfill/stable';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './assets/global.scss';
+import { InputNumber } from 'components/atoms/index';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';

@@ -5,7 +5,6 @@
   "insertPragma": false,
   "jsxBracketSameLine": false,
   "jsxSingleQuote": true,
-  "parser": "babel",
   "printWidth": 100,
   "proseWrap": "preserve",
   "requirePragma": false,
@@ -15,5 +14,13 @@
   "trailingComma": "es5",
   "useTabs": false,
   "endOfLine":"auto",
-  "react/jsx-indent": "off"
+  "react/jsx-indent": "off",
+  "overrides": [
+    {
+      "files": ["*.js", "*.jsx", "*.ts"],
+      "options": {
+          "parser": "babel"
+      }
+    }
+  ]
 }

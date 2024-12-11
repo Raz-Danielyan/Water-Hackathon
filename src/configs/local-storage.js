@@ -1,8 +1,12 @@
 export const loadState = () => {
   try {
-    const serializedState = localStorage.getItem('rb_state');
+    const serializedState = localStorage.getItem('hackatoon_state');
     if (serializedState === null) {
-      return undefined;
+      return {
+        user: {
+          role: 'guest',
+        },
+      };
     }
     return JSON.parse(serializedState);
   } catch (e) {
@@ -18,7 +22,7 @@ export const saveState = state => {
         user,
         jwt,
       });
-      localStorage.setItem('rb_state', serializedState);
+      localStorage.setItem('hackatoon_state', serializedState);
     }
   } catch (e) {
     // ignore errors
@@ -26,7 +30,7 @@ export const saveState = state => {
 };
 
 export const emptyState = () => {
-  localStorage.removeItem('rb_state');
+  localStorage.removeItem('hackatoon_state');
 };
 
 export const getAccessToken = () => {

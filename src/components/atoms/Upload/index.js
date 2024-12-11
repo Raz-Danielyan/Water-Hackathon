@@ -2,7 +2,6 @@ import styled, { css } from 'styled-components';
 import { Upload as upload, Spin } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { DeleteOutlined } from '@ant-design/icons';
-import { Col, Paragraph } from '../index';
 
 const Upload = styled(upload)`
   .ant-upload.ant-upload-select-picture-card {
@@ -168,31 +167,9 @@ const CustomUpload = ({
   ...props
 }) => {
   return (
-    <UploadWrapper>
-      <Spin spinning={loading}>
-        {aspect ? (
-          <ImgCrop aspect={aspect} beforeCrop={a => a?.type?.startsWith('image')}>
-            <Upload {...props} fileList={fileList}>
-              {children}
-            </Upload>
-          </ImgCrop>
-        ) : (
-          <Upload {...props} fileList={fileList}>
-            {children}
-          </Upload>
-        )}
-      </Spin>
-      {showDelete && (
-        <div className='delete_wrapper'>
-          <Col align='center' cursor='pointer' onClick={onRemove}>
-            <DeleteOutlined className='delete_icon' />
-            <Paragraph mb={0} color='#fff'>
-              Delete
-            </Paragraph>
-          </Col>
-        </div>
-      )}
-    </UploadWrapper>
+    <Upload {...props} fileList={fileList}>
+      {children}
+    </Upload>
   );
 };
 export default CustomUpload;

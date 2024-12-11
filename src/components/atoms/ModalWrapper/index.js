@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import ReactDOM from 'react-dom';
-import { Form } from '../index';
 
 const ModalWrapperComp = styled.div`
   position: fixed;
@@ -29,9 +28,7 @@ const ModalWrapper = ({ children, closeModal }) => {
     }
   };
   return ReactDOM.createPortal(
-    <ModalWrapperComp onMouseDownCapture={handleClick}>
-      <Form.Provider onFormChange={() => {}}>{children}</Form.Provider>
-    </ModalWrapperComp>,
+    <ModalWrapperComp onMouseDownCapture={handleClick}>{children}</ModalWrapperComp>,
     modalRoot
   );
 };

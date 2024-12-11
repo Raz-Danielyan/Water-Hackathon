@@ -1,39 +1,35 @@
 import { lazy, Suspense } from 'react';
 import { protectedRouts } from 'constants/routes';
-import { useSelector } from 'react-redux';
-import { getUser } from './app/services/selector-helpers';
 import DashboardWrapper from './components/templates/dashboard-wrapper';
 import GuestWrapper from './components/templates/guest-wrapper';
 
 const lazyLoadPage = path => lazy(() => import(`./${path}`));
 
 const PageContainer = ({ route }) => {
-  const user = useSelector(getUser);
   const Children = lazyLoadPage(route.component);
-  if (user?.id) {
-    return (
-      <Suspense>
-        <DashboardWrapper>
-          <Children />
-        </DashboardWrapper>
-      </Suspense>
-    );
-  }
-
+  // if (user?.id) {
   return (
     <Suspense>
-      <GuestWrapper>
+      <DashboardWrapper>
         <Children />
-      </GuestWrapper>
+      </DashboardWrapper>
     </Suspense>
   );
+  // }
+
+  // return (
+  //   <Suspense>
+  //     <GuestWrapper>
+  //       <Children />
+  //     </GuestWrapper>
+  //   </Suspense>
+  // );
 };
 
 export default PageContainer;
 
 export const getPageComponents = role => {
   const components = {};
-
   Object.values(protectedRouts[role]).forEach(route => {
     components[route.key] = {
       component: route.component,

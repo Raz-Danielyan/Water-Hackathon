@@ -1,9 +1,0 @@
-import client from './main-client';
-import { {{camelCase name}}Endpoint } from '../constants/endpoints';
-
-export const {{> fetchAllServiceName }} = filters => client().get({{camelCase name}}Endpoint, { filters });
-export const {{> fetchAllServiceCount }} = filters => client().get({{camelCase name}}Endpoint/count, { filters });
-export const {{> fetchOneServiceName }} = ({ id, ...filters }) => client().get(`${ {{camelCase name}}Endpoint}/${id}`, { filters });
-export const {{> updateServiceName }} = params => client().put(`${ {{camelCase name}}Endpoint}/${params.id}`, { data: params.data });
-export const {{> addServiceName }} = data => client().post({{camelCase name}}Endpoint, { data });
-export const {{> deleteServiceName }} = params => client().delete(`${ {{camelCase name}}Endpoint}/${params.id}`, { params });

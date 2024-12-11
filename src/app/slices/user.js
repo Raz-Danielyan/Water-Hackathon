@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { emptyState, loadState, saveState } from '../../configs/local-storage';
 
-const initialState = loadState() || { user: null, jwt: null };
+const initialState = loadState() || { user: { role: 'guest' }, jwt: null };
 
 const userSlice = createSlice({
   name: 'user',

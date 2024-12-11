@@ -1,6 +1,5 @@
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import routes from 'constants/routes';
 import { useSelector } from 'react-redux';
 import { Spin } from 'antd';
 import styled from 'styled-components';
@@ -19,7 +18,8 @@ const PageLoadingWrapper = styled.div`
 const RouteList = () => {
   const role = useSelector(getUserRole);
   const user = useSelector(getUser);
-  const routeList = user ? getPageComponents(role) : routes;
+  const state1 = useSelector(state => state);
+  const routeList = user?.role ? getPageComponents(user.role) : [];
 
   return (
     <Routes>
