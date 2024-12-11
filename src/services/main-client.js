@@ -1,6 +1,5 @@
 import axios from 'axios';
 // import Promise from 'bluebird';
-import routes from 'constants/routes';
 import { notification } from 'antd';
 import { getAccessToken, emptyState } from '../configs/local-storage';
 import { API_ROOT } from '../configs/env-vars';
@@ -27,9 +26,6 @@ export default (headers = {}) => {
       const errorResponse = error.response;
       if (process.env.NODE_ENV === 'production') {
         switch (errorResponse.status) {
-          case 404:
-            window.location.pathname = routes.notFound.pathname;
-            break;
           case 403:
             window.location.pathname = '/not-permitted';
             break;
