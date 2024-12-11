@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkratebuzz=self.webpackChunkratebuzz||[]).push([[818,999],{29768:(e,u,a)=>{a.r(u),a.d(u,{default:()=>r});var s=a(92757),t=a(70579);const r=()=>(0,t.jsx)(s.default,{})}}]);
+//# sourceMappingURL=999.1468118e.chunk.js.map

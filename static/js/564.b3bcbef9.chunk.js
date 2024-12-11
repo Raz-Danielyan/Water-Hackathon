@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkratebuzz=self.webpackChunkratebuzz||[]).push([[564,817],{8817:(e,s,a)=>{a.r(s),a.d(s,{default:()=>r});a(65043);var d=a(70579);const r=()=>(0,d.jsx)("div",{children:(0,d.jsx)("div",{children:"ResetPassword"})})},78564:(e,s,a)=>{a.r(s),a.d(s,{default:()=>t});var d=a(8817),r=a(70579);const t=()=>(0,r.jsx)(d.default,{})}}]);
+//# sourceMappingURL=564.b3bcbef9.chunk.js.map

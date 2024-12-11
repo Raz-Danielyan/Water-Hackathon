@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkratebuzz=self.webpackChunkratebuzz||[]).push([[817],{8817:(e,s,r)=>{r.r(s),r.d(s,{default:()=>d});r(65043);var a=r(70579);const d=()=>(0,a.jsx)("div",{children:(0,a.jsx)("div",{children:"ResetPassword"})})}}]);
+//# sourceMappingURL=817.0b6b3476.chunk.js.map

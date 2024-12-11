@@ -1,0 +1,1 @@
+{"version":3,"file":"static/js/724.db37305e.chunk.js","mappings":"mIACO,MAAMA,EAAW,Q","sources":["constants/endpoints.js"],"sourcesContent":["/* PLOP_INJECT_EXPORT */\r\nexport const usersApi = '/users';\r\n"],"names":["usersApi"],"sourceRoot":""}

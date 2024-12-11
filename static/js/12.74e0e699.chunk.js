@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkratebuzz=self.webpackChunkratebuzz||[]).push([[12,225],{4225:(e,s,a)=>{a.r(s),a.d(s,{default:()=>r});a(65043);var d=a(70579);const r=()=>(0,d.jsx)("div",{children:(0,d.jsx)("div",{children:"SignUp"})})},67012:(e,s,a)=>{a.r(s),a.d(s,{default:()=>t});var d=a(4225),r=a(70579);const t=()=>(0,r.jsx)(d.default,{})}}]);
+//# sourceMappingURL=12.74e0e699.chunk.js.map

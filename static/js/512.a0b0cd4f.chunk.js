@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkratebuzz=self.webpackChunkratebuzz||[]).push([[512],{33512:(a,e,s)=>{s.r(e),s.d(e,{defFormLayout:()=>p,phoneMask:()=>o,phonePattern:()=>t,postalMask:()=>r,postalPattern:()=>n,sortDirectionKeys:()=>d});const t=/\(?(\d{3})\)?[ .-]?(\d{3})[ .-]?(\d{4})/,o="(111) 111-1111",n=/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/,r="*** ***",d={ascend:"ASC",descend:"DESC"},p={layout:"horizontal",labelCol:{span:24},wrapperCol:{span:24}}}}]);
+//# sourceMappingURL=512.a0b0cd4f.chunk.js.map
