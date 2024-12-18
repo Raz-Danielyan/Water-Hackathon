@@ -1,11 +1,11 @@
 {
   "files": {
     "main.css": "/Water-Hackathon/static/css/main.f6d573a2.css",
-    "main.js": "/Water-Hackathon/static/js/main.dab5f4c2.js",
+    "main.js": "/Water-Hackathon/static/js/main.37698c54.js",
     "static/js/408.b9fb4615.chunk.js": "/Water-Hackathon/static/js/408.b9fb4615.chunk.js",
     "static/js/919.16a93f6f.chunk.js": "/Water-Hackathon/static/js/919.16a93f6f.chunk.js",
     "static/js/648.46725d3b.chunk.js": "/Water-Hackathon/static/js/648.46725d3b.chunk.js",
-    "static/js/297.6f4be7fb.chunk.js": "/Water-Hackathon/static/js/297.6f4be7fb.chunk.js",
+    "static/js/297.5f966366.chunk.js": "/Water-Hackathon/static/js/297.5f966366.chunk.js",
     "static/css/955.6fccb496.chunk.css": "/Water-Hackathon/static/css/955.6fccb496.chunk.css",
     "static/js/955.52d4a8b1.chunk.js": "/Water-Hackathon/static/js/955.52d4a8b1.chunk.js",
     "static/js/678.a25fff59.chunk.js": "/Water-Hackathon/static/js/678.a25fff59.chunk.js",
@@ -40,13 +40,13 @@
     "static/js/864.9da7a49e.chunk.js": "/Water-Hackathon/static/js/864.9da7a49e.chunk.js",
     "static/js/20.281fb371.chunk.js": "/Water-Hackathon/static/js/20.281fb371.chunk.js",
     "static/js/705.532ed1da.chunk.js": "/Water-Hackathon/static/js/705.532ed1da.chunk.js",
-    "static/js/757.3abd928f.chunk.js": "/Water-Hackathon/static/js/757.3abd928f.chunk.js",
+    "static/js/757.597fa724.chunk.js": "/Water-Hackathon/static/js/757.597fa724.chunk.js",
     "index.html": "/Water-Hackathon/index.html",
     "main.f6d573a2.css.map": "/Water-Hackathon/static/css/main.f6d573a2.css.map",
-    "main.dab5f4c2.js.map": "/Water-Hackathon/static/js/main.dab5f4c2.js.map",
+    "main.37698c54.js.map": "/Water-Hackathon/static/js/main.37698c54.js.map",
     "408.b9fb4615.chunk.js.map": "/Water-Hackathon/static/js/408.b9fb4615.chunk.js.map",
     "648.46725d3b.chunk.js.map": "/Water-Hackathon/static/js/648.46725d3b.chunk.js.map",
-    "297.6f4be7fb.chunk.js.map": "/Water-Hackathon/static/js/297.6f4be7fb.chunk.js.map",
+    "297.5f966366.chunk.js.map": "/Water-Hackathon/static/js/297.5f966366.chunk.js.map",
     "955.6fccb496.chunk.css.map": "/Water-Hackathon/static/css/955.6fccb496.chunk.css.map",
     "955.52d4a8b1.chunk.js.map": "/Water-Hackathon/static/js/955.52d4a8b1.chunk.js.map",
     "678.a25fff59.chunk.js.map": "/Water-Hackathon/static/js/678.a25fff59.chunk.js.map",
@@ -77,10 +77,10 @@
     "864.9da7a49e.chunk.js.map": "/Water-Hackathon/static/js/864.9da7a49e.chunk.js.map",
     "20.281fb371.chunk.js.map": "/Water-Hackathon/static/js/20.281fb371.chunk.js.map",
     "705.532ed1da.chunk.js.map": "/Water-Hackathon/static/js/705.532ed1da.chunk.js.map",
-    "757.3abd928f.chunk.js.map": "/Water-Hackathon/static/js/757.3abd928f.chunk.js.map"
+    "757.597fa724.chunk.js.map": "/Water-Hackathon/static/js/757.597fa724.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.f6d573a2.css",
-    "static/js/main.dab5f4c2.js"
+    "static/js/main.37698c54.js"
   ]
 }
