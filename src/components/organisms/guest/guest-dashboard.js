@@ -502,7 +502,7 @@ const GuestDashboard = () => {
                       <Col span={8}>
                         <Divider margin={'0px !important'} />
                       </Col>
-                      <Col justify='center'>
+                      <Col justify='center' span={8}>
                         <Paragraph fw={700} mb={0}>
                           Per BMO
                         </Paragraph>
@@ -546,7 +546,7 @@ const GuestDashboard = () => {
                       <Col span={8}>
                         <Divider margin={'0px !important'} />
                       </Col>
-                      <Col justify='center'>
+                      <Col justify='center' span={8}>
                         <Paragraph fw={700} mb={0}>
                           Per Marz
                         </Paragraph>
