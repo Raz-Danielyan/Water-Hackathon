@@ -62,6 +62,11 @@ const Paragraph = styled(paragraph)`
     css`
       margin: ${props.margin};
     `}
+    ${props =>
+    props.back_color &&
+    css`
+      background: ${props.back_color};
+    `}
   ${props =>
     props.width &&
     css`

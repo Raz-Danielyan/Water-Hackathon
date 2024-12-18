@@ -12,7 +12,7 @@ import {
 import useApiCall from 'utils/hooks/useApiCall';
 import { Typography } from 'antd';
 import { Spin } from 'antd/lib/index';
-import { Col, DatePicker, Paragraph, Row } from 'components/atoms/index';
+import { Col, DatePicker, Divider, Paragraph, Row } from 'components/atoms/index';
 import Button from 'components/atoms/Button/index';
 import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import moment from 'moment';
@@ -339,7 +339,7 @@ const GuestDashboard = () => {
             </Title>
             <Col span={24} border_radius={'32px'} padding='16px 32px' back_color='rgb(229 229 220)'>
               <Row gutter={[16, 16]}>
-                <Col span={12}>
+                <Col span={24} lg={12}>
                   <Title level={4}>Pie represents Marzs and BMOs Water Discharge Quantity</Title>
                   <ResponsiveContainer width='100%' height={200}>
                     <PieChart width='100%' height={200}>
@@ -370,7 +370,7 @@ const GuestDashboard = () => {
                     </PieChart>
                   </ResponsiveContainer>
                 </Col>
-                <Col span={12}>
+                <Col span={24} lg={12}>
                   <Title level={4}>Pie represents Marzs and BMOs Water Intake Quantity</Title>
                   <ResponsiveContainer width='100%' height={200}>
                     <PieChart width='100%' height={200}>
@@ -401,7 +401,7 @@ const GuestDashboard = () => {
                     </PieChart>
                   </ResponsiveContainer>
                 </Col>
-                <Col span={12}>
+                <Col span={24} lg={12}>
                   <Title level={4}>Pie represents Marzs and BMOs Water Sources Quantity</Title>
                   <ResponsiveContainer width='100%' height={200}>
                     <PieChart width='100%' height={200}>
@@ -435,7 +435,7 @@ const GuestDashboard = () => {
                     </PieChart>
                   </ResponsiveContainer>
                 </Col>
-                <Col span={12}>
+                <Col span={24} lg={12}>
                   <Title level={4}>Pie represents BMOs Water Consumption Quantity</Title>
                   <ResponsiveContainer width='100%' height={200}>
                     <PieChart width='100%' height={200}>
@@ -454,7 +454,7 @@ const GuestDashboard = () => {
                     </PieChart>
                   </ResponsiveContainer>
                 </Col>
-                <Col span={12}>
+                <Col span={24} lg={12}>
                   <Title level={4}>Pie represents BMOs removing the water intake Quantity</Title>
                   <ResponsiveContainer width='100%' height={200}>
                     <PieChart width='100%' height={200}>
@@ -473,7 +473,7 @@ const GuestDashboard = () => {
                     </PieChart>
                   </ResponsiveContainer>
                 </Col>
-                <Col span={12}>
+                <Col span={24} lg={12}>
                   <Title level={4}>Pie represents BMOs permits Quantity</Title>
                   <ResponsiveContainer width='100%' height={200}>
                     <PieChart width='100%' height={200}>
@@ -497,29 +497,91 @@ const GuestDashboard = () => {
                 </Col>
                 <Col span={24}>
                   <Title level={4}>All Water Resources Names</Title>
-                  <Paragraph fw={700}>Per BMO -- </Paragraph>
+                  <Col span={24} padding={0} mb={0}>
+                    <Row gutter={0} align='middle'>
+                      <Col span={8}>
+                        <Divider margin={'0px !important'} />
+                      </Col>
+                      <Col justify='center'>
+                        <Paragraph fw={700} mb={0}>
+                          Per BMO
+                        </Paragraph>
+                      </Col>
+                      <Col span={8}>
+                        <Divider margin={'0px !important'} />
+                      </Col>
+                    </Row>
+                  </Col>
                   {Object.entries(globalBmoData).length
                     ? Object.entries(globalBmoData).map(([key, value]) => (
                         <div style={{ marginTop: 5 }} key={key}>
-                          <br></br>
-                          <b>{key}</b>--
-                          {`${Object.entries(value)
-                            .filter(([k]) => k === 'dataResourcesWaterSources')
-                            .map(([, el]) => el)
-                            .join(',')}`}
+                          <Paragraph
+                            width='100%'
+                            back_color={'rgb(136, 132, 216)'}
+                            align='center'
+                            padding='5px'
+                            color='white'
+                            radius='15px'
+                            mb={5}
+                          >
+                            {key}
+                          </Paragraph>
+                          <p
+                            style={{
+                              display: 'inline',
+                              whiteSpace: 'normal',
+                              overflowWrap: 'break-word',
+                            }}
+                          >
+                            {`${Object.entries(value)
+                              .filter(([k]) => k === 'dataResourcesWaterSources')
+                              .map(([, el]) => el)
+                              .join(',')}`}
+                          </p>
                         </div>
                       ))
                     : ''}
-                  <Paragraph fw={700}>Per Marz --</Paragraph>
+                  <Col span={24} padding={0} mb={0}>
+                    <Row gutter={0} align='middle'>
+                      <Col span={8}>
+                        <Divider margin={'0px !important'} />
+                      </Col>
+                      <Col justify='center'>
+                        <Paragraph fw={700} mb={0}>
+                          Per Marz
+                        </Paragraph>
+                      </Col>
+                      <Col span={8}>
+                        <Divider margin={'0px !important'} />
+                      </Col>
+                    </Row>
+                  </Col>
                   {Object.entries(separatedDataPerMarz).length
                     ? Object.entries(separatedDataPerMarz).map(([key, value]) => (
                         <div style={{ marginTop: 5 }} key={key}>
-                          <br></br>
-                          <b>{key}</b>--
-                          {`${Object.entries(value)
-                            .filter(([k]) => k === 'dataResourcesWaterSources')
-                            .map(([, el]) => el)
-                            .join(',')}`}
+                          <Paragraph
+                            width='100%'
+                            back_color={'rgb(136, 132, 216)'}
+                            align='center'
+                            padding='5px'
+                            color='white'
+                            radius='15px'
+                            mb={5}
+                          >
+                            {key}
+                          </Paragraph>
+                          <p
+                            style={{
+                              display: 'inline',
+                              whiteSpace: 'normal',
+                              overflowWrap: 'break-word',
+                            }}
+                          >
+                            {`${Object.entries(value)
+                              .filter(([k]) => k === 'dataResourcesWaterSources')
+                              .map(([, el]) => el)
+                              .join(',')}`}
+                          </p>
                         </div>
                       ))
                     : ''}
