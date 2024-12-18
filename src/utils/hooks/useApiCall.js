@@ -5,7 +5,7 @@ const useApiCall = (callFunc, countFunc, withoutLoading) => {
   const [data, setData] = useState([]);
   const [count, setCount] = useState(null);
 
-  const handleApiCall = (params, callback = () => {}) => {
+  const handleApiCall = (params, callback = () => {}, callbackError = () => {}) => {
     handleLoadingChange(true);
     if (callFunc) {
       callFunc(params)
@@ -15,6 +15,7 @@ const useApiCall = (callFunc, countFunc, withoutLoading) => {
           callback(res?.data || []);
         })
         .catch(() => {
+          callbackError();
           handleLoadingChange();
         });
     }
@@ -38,7 +39,7 @@ const useApiCall = (callFunc, countFunc, withoutLoading) => {
     setCount(0);
   };
 
-  return [data, loading, handleApiCall, count, setDefaultValues];
+  return [data, loading, handleApiCall, count, setDefaultValues, setData];
 };
 
 export default useApiCall;

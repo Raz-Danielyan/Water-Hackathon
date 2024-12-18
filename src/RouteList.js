@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { Spin } from 'antd';
 import styled from 'styled-components';
 import PageContainer, { getPageComponents } from './getPageContainer';
-import { getUser, getUserRole } from './app/services/selector-helpers';
+import { getUser } from './app/services/selector-helpers';
 import NotFoundPage from './pages/not-found';
 
 const PageLoadingWrapper = styled.div`
@@ -16,9 +16,7 @@ const PageLoadingWrapper = styled.div`
 `;
 
 const RouteList = () => {
-  const role = useSelector(getUserRole);
   const user = useSelector(getUser);
-  const state1 = useSelector(state => state);
   const routeList = user?.role ? getPageComponents(user.role) : [];
 
   return (

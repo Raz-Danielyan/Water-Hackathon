@@ -6,7 +6,7 @@ export const getPermits = ({ bmoid, year, ...data }) =>
   client().get(`/main/${bmoid}/${year}`, data);
 export const getIntakeDischargePoints = ({ bmoid, ...data }) =>
   client().get(`/intake-discharge-points/${bmoid}`, data);
-export const getDataWaterintake = ({ bmoid, year, ...data }) =>
+export const getDataWaterIntake = ({ bmoid, year, ...data }) =>
   client().get(`/datawaterintake/${bmoid}/${year}`, data);
 export const getDataWaterDischarge = ({ bmoid, year, ...data }) =>
   client().get(`/datawaterdischarge/${bmoid}/${year}`, data);

@@ -1,13 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { Suspense, useEffect, useState } from 'react';
-import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import React, { useEffect, useState } from 'react';
 import {
   getBmo,
   getDataWaterDischarge,
-  getDataWaterintake,
+  getDataWaterIntake,
   getIntakeDischargePoints,
   getMarz,
   getPermits,
@@ -15,27 +12,19 @@ import {
 import useApiCall from 'utils/hooks/useApiCall';
 import { Typography } from 'antd';
 import { Spin } from 'antd/lib/index';
-import { centroid } from 'turf/index';
-import { Col, DatePicker, Paragraph, RangePicker, Row } from 'components/atoms/index';
+import { Col, DatePicker, Paragraph, Row } from 'components/atoms/index';
 import Button from 'components/atoms/Button/index';
-import {
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import moment from 'moment';
-import geojsonData from '../../../assets/am.json';
+import DashboardMap from 'components/molecules/dashboard-map';
+import DashboardCharts from 'components/molecules/dashbaord-charts';
+import placesNames from '../../../data/places-names.json';
+import bmoData from '../../../data/bmo-data.json';
+import marzData from '../../../data/marz-data.json';
 
 const { Title } = Typography;
 
-const totalQuantit = data => {
+const totalQuantity = data => {
   return data.reduce((acc, item) => acc + item.totalQuantity, 0);
 };
 const listOfNames = data => {
@@ -59,7 +48,18 @@ const engMarz = {
   Տավուշ: 'Tavush',
 };
 
-const CustomTooltip = ({ payload, continuem = true }) => {
+const engBMO = {
+  Ախուրյան: 'Akhuryan',
+  Արարատյան: 'Araratyan',
+  Հարավային: 'Southern',
+  Հյուսիսային: 'Northern',
+  Հրազդան: 'Hrazdan',
+  Սևան: 'Sevan',
+};
+
+const engBMOValues = Object.values(engBMO);
+
+const CustomTooltip = ({ payload, detailedSource = true }) => {
   return (
     <div>
       <div className='ant-popover-arrow' />
@@ -68,7 +68,7 @@ const CustomTooltip = ({ payload, continuem = true }) => {
         <span>
           <p className='desc'>
             <small>{payload?.[0]?.payload?.value}</small>
-            {continuem && ' հազ. խոր.մ/տարի`'}
+            {detailedSource && ' k m³/yr`'}
           </p>
         </span>
       </div>
@@ -76,238 +76,48 @@ const CustomTooltip = ({ payload, continuem = true }) => {
   );
 };
 
-const ProvinceLabels = React.memo(({ data, marzData }) => {
-  const map = useMap();
-  const markers = React.useRef([]);
-
-  useEffect(() => {
-    data.features.forEach(feature => {
-      const center = centroid(feature);
-      const [lng, lat] = center.geometry.coordinates;
-
-      const marker = L.marker([lat, lng], {
-        icon: L.divIcon({
-          className: 'province-label',
-          html: `<div style="font-size:12px; color:blue; white-space: nowrap;">${
-            feature.properties.name
-          }</div>
-        ${
-          marzData?.[feature.properties.name]
-            ? `<div style="font-size:12px; color:red; white-space: nowrap;"> ${Math.round(
-                marzData?.[feature.properties.name].dataWaterDischargeQuanitity
-              )} հազ. խոր.մ/տարի</div>
-              <div style="font-size:12px; color:green; white-space: nowrap;"> ${Math.round(
-                marzData?.[feature.properties.name].dataWaterintakeQuanitity
-              )} հազ. խոր.մ/տարի</div>
-               <div style="font-size:12px; color:black; white-space: nowrap;"> ${Math.round(
-                 marzData?.[feature.properties.name].dataResourcesWaterSourcesLength
-               )}</div>
-              `
-            : ''
-        }`,
-        }),
-      }).addTo(map);
-
-      markers.current.push(marker);
-    });
-    return () => {
-      markers.current.forEach(marker => map.removeLayer(marker));
-      markers.current = [];
-    };
-  }, [data, marzData, map]);
-
-  return null;
-});
-
 const GuestDashboard = () => {
-  const [marz, , marzCall] = useApiCall(getMarz);
+  const [marz, , marzCall, , , setMarz] = useApiCall(getMarz);
   const [, , permitsCall] = useApiCall(getPermits);
   const [, , intakeDischargePointsCall] = useApiCall(getIntakeDischargePoints);
-  const [, , dataWaterintakeCall] = useApiCall(getDataWaterintake);
+  const [, , dataWaterIntakeCall] = useApiCall(getDataWaterIntake);
   const [, , dataWaterDischargeCall] = useApiCall(getDataWaterDischarge);
-  const [bmo, , bmoCall] = useApiCall(getBmo);
-  const [seperetedDataPerBMO, setSeperetedDataPerBMO] = useState({});
-  const [globaledBmoData, setGlobaledBmoData] = useState({});
-  const [sepetetedDataPerMarz, setSepetetedDataPerMarz] = useState({});
+  const [bmo, , bmoCall, , , setBmo] = useApiCall(getBmo);
+  const [separatedDataPerBMO, setSeparatedDataPerBMO] = useState({});
+  const [globalBmoData, setGlobalBmoData] = useState({});
+  const [separatedDataPerMarz, setSeparatedDataPerMarz] = useState({});
   const [year, setYear] = useState('2024');
-  const [rangeYears, setRangeYears] = useState([2022, 2023, 2024]);
-  const [chartData, setChartData] = useState({});
   const [charLoading, setCharLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [notConnected, setNotConnected] = useState(false);
 
   useEffect(() => {
-    bmoCall();
-    marzCall();
-
-    return () => {
-      const m = L.DomUtil.get('map');
-      if (m) {
-        m._leaflet_id = null;
+    bmoCall(
+      {},
+      () => {},
+      () => {
+        setNotConnected(true);
+        setMarz(placesNames.marz);
+        setBmo(placesNames.bmo);
       }
-    };
+    );
+    marzCall();
   }, []);
 
   useEffect(() => {
-    if (bmo.length) {
-      setCharLoading(true);
-      const allDone = { permits: false, dataWaterintake: false, dataWaterDischarge: false };
-      Promise.all(
-        rangeYears.reduce(
-          (acc, yr) => [
-            ...acc,
-            ...bmo.reduce((ac, bm) => [...ac, getPermits({ bmoid: bm.internal_id, year: yr })], []),
-          ],
-          []
-        )
-      )
-        .then(data => {
-          const converData = data
-            .map(el => el?.data)
-            .flat()
-            .reduce(
-              (acc, value) => ({
-                ...acc,
-                [value.yearA]: {
-                  ...(acc?.[value.yearA] ? acc[value.yearA] : {}),
-                  [value.basinName]: acc?.[value.yearA]?.[value.basinName]
-                    ? acc[value.yearA][value.basinName] + 1
-                    : 1,
-                },
-              }),
-              {}
-            );
-          setChartData(prev => ({
-            ...prev,
-            ...Object.entries(converData).reduce(
-              (acc, [key, value]) => ({
-                ...acc,
-                [key]: { ...(prev?.[key] ? prev[key] : {}), permitsQuantity: value },
-              }),
-              {}
-            ),
-          }));
-          allDone.permits = true;
-          if (Object.values(allDone).every(el => el === true)) {
-            setCharLoading(false);
-          }
-        })
-        .catch(e => {
-          // eslint-disable-next-line no-console
-          console.error(e);
-        });
-      Promise.all(
-        rangeYears.reduce(
-          (acc, yr) => [
-            ...acc,
-            ...bmo.reduce(
-              (ac, bm) => [...ac, getDataWaterintake({ bmoid: bm.internal_id, year: yr })],
-              []
-            ),
-          ],
-          []
-        )
-      )
-        .then(data => {
-          const converData = data
-            .map(el => el?.data)
-            .flat()
-            .reduce(
-              (acc, value) => ({
-                ...acc,
-                [value.yearA]: {
-                  ...(acc?.[value.yearA] ? acc[value.yearA] : {}),
-                  [value.basinName]:
-                    (acc?.[value.yearA]?.[value.basinName]
-                      ? acc[value.yearA][value.basinName]
-                      : 0) + value.totalQuantity,
-                },
-              }),
-              {}
-            );
-          setChartData(prev => ({
-            ...prev,
-            ...Object.entries(converData).reduce(
-              (acc, [key, value]) => ({
-                ...acc,
-                [key]: { ...(prev?.[key] ? prev[key] : {}), dataWaterintakeQuanitity: value },
-              }),
-              {}
-            ),
-          }));
-          allDone.dataWaterintake = true;
-          if (Object.values(allDone).every(el => el === true)) {
-            setCharLoading(false);
-          }
-        })
-        .catch(e => {
-          // eslint-disable-next-line no-console
-          console.error(e);
-        });
-      Promise.all(
-        rangeYears.reduce(
-          (acc, yr) => [
-            ...acc,
-            ...bmo.reduce(
-              (ac, bm) => [...ac, getDataWaterDischarge({ bmoid: bm.internal_id, year: yr })],
-              []
-            ),
-          ],
-          []
-        )
-      )
-        .then(data => {
-          const converData = data
-            .map(el => el?.data)
-            .flat()
-            .reduce(
-              (acc, value) => ({
-                ...acc,
-                [value.yearA]: {
-                  ...(acc?.[value.yearA] ? acc[value.yearA] : {}),
-                  [value.basinName]:
-                    (acc?.[value.yearA]?.[value.basinName]
-                      ? acc[value.yearA][value.basinName]
-                      : 0) + value.totalQuantity,
-                },
-              }),
-              {}
-            );
-          setChartData(prev => ({
-            ...prev,
-            ...Object.entries(converData).reduce(
-              (acc, [key, value]) => ({
-                ...acc,
-                [key]: { ...(prev?.[key] ? prev[key] : {}), dataDataWaterDischarge: value },
-              }),
-              {}
-            ),
-          }));
-          allDone.dataWaterDischarge = true;
-          if (Object.values(allDone).every(el => el === true)) {
-            setCharLoading(false);
-          }
-        })
-        .catch(e => {
-          // eslint-disable-next-line no-console
-          console.error(e);
-        });
-    }
-  }, [bmo, rangeYears]);
-
-  useEffect(() => {
-    if (bmo?.length) {
+    if (bmo?.length && !notConnected) {
       for (let i = 0; i < bmo.length; i += 1) {
         setLoading(true);
         const allLoaded = {
           permitsCall: false,
           intakeDischargePointsCall: false,
-          dataWaterintakeCall: false,
+          dataWaterIntakeCall: false,
           dataWaterDischargeCall: false,
         };
         permitsCall({ bmoid: bmo[i].internal_id, year }, data => {
-          setSeperetedDataPerBMO(prev => ({
+          setSeparatedDataPerBMO(prev => ({
             ...prev,
-            [bmo[i].name]: { ...(prev?.[bmo[i].name] || {}), permits: data },
+            [engBMO[bmo[i].name]]: { ...(prev?.[engBMO[bmo[i].name]] || {}), permits: data },
           }));
           allLoaded.permitsCall = true;
           if (Object.values(allLoaded).every(el => el === true)) {
@@ -317,9 +127,12 @@ const GuestDashboard = () => {
           }
         });
         intakeDischargePointsCall({ bmoid: bmo[i].internal_id }, data => {
-          setSeperetedDataPerBMO(prev => ({
+          setSeparatedDataPerBMO(prev => ({
             ...prev,
-            [bmo[i].name]: { ...(prev?.[bmo[i].name] || {}), intakeDischargePoints: data },
+            [engBMO[bmo[i].name]]: {
+              ...(prev?.[engBMO[bmo[i].name]] || {}),
+              intakeDischargePoints: data,
+            },
           }));
           allLoaded.intakeDischargePointsCall = true;
           if (Object.values(allLoaded).every(el => el === true)) {
@@ -328,12 +141,15 @@ const GuestDashboard = () => {
             setLoading(true);
           }
         });
-        dataWaterintakeCall({ bmoid: bmo[i].internal_id, year }, data => {
-          setSeperetedDataPerBMO(prev => ({
+        dataWaterIntakeCall({ bmoid: bmo[i].internal_id, year }, data => {
+          setSeparatedDataPerBMO(prev => ({
             ...prev,
-            [bmo[i].name]: { ...(prev?.[bmo[i].name] || {}), dataWaterintake: data },
+            [engBMO[bmo[i].name]]: {
+              ...(prev?.[engBMO[bmo[i].name]] || {}),
+              dataWaterIntake: data,
+            },
           }));
-          allLoaded.dataWaterintakeCall = true;
+          allLoaded.dataWaterIntakeCall = true;
           if (Object.values(allLoaded).every(el => el === true)) {
             setLoading(false);
           } else {
@@ -341,9 +157,12 @@ const GuestDashboard = () => {
           }
         });
         dataWaterDischargeCall({ bmoid: bmo[i].internal_id, year }, data => {
-          setSeperetedDataPerBMO(prev => ({
+          setSeparatedDataPerBMO(prev => ({
             ...prev,
-            [bmo[i].name]: { ...(prev?.[bmo[i].name] || {}), dataWaterDischarge: data },
+            [engBMO[bmo[i].name]]: {
+              ...(prev?.[engBMO[bmo[i].name]] || {}),
+              dataWaterDischarge: data,
+            },
           }));
           allLoaded.dataWaterDischargeCall = true;
           if (Object.values(allLoaded).every(el => el === true)) {
@@ -353,28 +172,36 @@ const GuestDashboard = () => {
           }
         });
       }
+    } else if (notConnected) {
+      setGlobalBmoData(bmoData[year]);
+      setSeparatedDataPerMarz(marzData[year]);
     }
-  }, [bmo, year]);
+  }, [bmo, year, notConnected]);
 
   useEffect(() => {
-    const areAllFileed = Object.values(seperetedDataPerBMO)
+    const areAllFilled = Object.values(separatedDataPerBMO)
       .map(el => Object.keys(el).length === 4)
       .every(val => val === true);
-    if (Object.keys(seperetedDataPerBMO).length === bmo.length && areAllFileed && bmo.length > 0) {
-      setGlobaledBmoData(
-        Object.entries(seperetedDataPerBMO).reduce(
+    if (
+      Object.keys(separatedDataPerBMO).length === bmo.length &&
+      areAllFilled &&
+      bmo.length > 0 &&
+      !notConnected
+    ) {
+      setGlobalBmoData(
+        Object.entries(separatedDataPerBMO).reduce(
           (acc, [key, value]) => ({
             ...acc,
             [key]: {
-              dataWaterDischargeQuanitity: totalQuantit(value.dataWaterDischarge || []),
-              dataWaterintakeQuanitity: totalQuantit(value?.dataWaterintake || []),
+              dataWaterDischargeQuantity: totalQuantity(value.dataWaterDischarge || []),
+              dataWaterIntakeQuantity: totalQuantity(value?.dataWaterIntake || []),
               dataResourcesWaterSources: listOfNames([
                 ...(value?.dataWaterDischarge || []),
-                ...(value?.dataWaterintake || []),
+                ...(value?.dataWaterIntake || []),
               ]),
               dataResourcesWaterSourcesLength: listOfNames([
                 ...(value.dataWaterDischarge || []),
-                ...(value.dataWaterintake || []),
+                ...(value.dataWaterIntake || []),
               ]).length,
               TotalJrar: totalKeyCount(
                 value?.intakeDischargePoints || [],
@@ -386,42 +213,42 @@ const GuestDashboard = () => {
                 'typeOfWaterUse',
                 'Ջրահեռացում'
               ),
-              totalPermists: (value?.permits || []).length,
+              totalPermits: (value?.permits || []).length,
             },
           }),
           {}
         )
       );
-      const allDatas = Object.values(seperetedDataPerBMO).reduce(
+      const allData = Object.values(separatedDataPerBMO).reduce(
         (acc, value) => [
           ...acc,
           ...(value?.dataWaterDischarge
             ? value.dataWaterDischarge.map(el => ({ ...el, dataWaterDischarge: true }))
             : []),
-          ...(value?.dataWaterintake
-            ? value.dataWaterDischarge.map(el => ({ ...el, dataWaterintake: true }))
+          ...(value?.dataWaterIntake
+            ? value.dataWaterIntake.map(el => ({ ...el, dataWaterIntake: true }))
             : []),
         ],
         []
       );
-      let createdMarzDatas = {};
+      let createdMarzData = {};
 
       for (let i = 0; i < marz.length; i += 1) {
-        createdMarzDatas = {
-          ...createdMarzDatas,
-          [engMarz[marz[i]?.name]]: allDatas.filter(
+        createdMarzData = {
+          ...createdMarzData,
+          [engMarz[marz[i]?.name]]: allData.filter(
             el => el?.marz_Internal_ID === marz[i]?.internal_id
           ),
         };
       }
 
-      setSepetetedDataPerMarz(
-        Object.entries(createdMarzDatas).reduce(
+      setSeparatedDataPerMarz(
+        Object.entries(createdMarzData).reduce(
           (acc, [key, value]) => ({
             ...acc,
             [key]: {
-              dataWaterDischargeQuanitity: totalQuantit(value.filter(el => el?.dataWaterDischarge)),
-              dataWaterintakeQuanitity: totalQuantit(value.filter(el => el?.dataWaterintake)),
+              dataWaterDischargeQuantity: totalQuantity(value.filter(el => el?.dataWaterDischarge)),
+              dataWaterIntakeQuantity: totalQuantity(value.filter(el => el?.dataWaterIntake)),
               dataResourcesWaterSources: listOfNames(value),
               dataResourcesWaterSourcesLength: listOfNames(value).length,
             },
@@ -430,7 +257,7 @@ const GuestDashboard = () => {
         )
       );
     }
-  }, [seperetedDataPerBMO]);
+  }, [separatedDataPerBMO]);
 
   const exportData = (data, name) => {
     const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(JSON.stringify(data))}`;
@@ -442,23 +269,22 @@ const GuestDashboard = () => {
   };
 
   const disabledDate = current => {
-    // Disable dates before 2000 and after 2024
     return (
-      current && (current.isBefore(moment('2000-01-01')) || current.isAfter(moment('2024-12-31')))
+      current && (current.isBefore(moment('2003-01-01')) || current.isAfter(moment('2024-12-31')))
     );
   };
 
   return (
     <div>
       <Spin spinning={loading}>
-        <Title>Tim 2 Prestentetion of Data Reserch of cadastre API</Title>
+        <Title>Tim 2 Presentation of Data Research of cadaster API</Title>
         <DatePicker
           picker='year'
           onChange={e => {
             setYear(moment(e).format('YYYY'));
-            setSeperetedDataPerBMO({});
-            setGlobaledBmoData({});
-            setSepetetedDataPerMarz({});
+            setSeparatedDataPerBMO({});
+            setGlobalBmoData({});
+            setSeparatedDataPerMarz({});
           }}
           defaultValue={moment(year, 'YYYY')}
           width='200px'
@@ -467,41 +293,20 @@ const GuestDashboard = () => {
         />
         <Row gutter={[15, 32]}>
           <Col span={24}>
-            <Title level={3}>MAP presentation of cadastre Data</Title>
+            <Title level={3}>MAP presentation of cadaster Data</Title>
             <Col span={24} border_radius={'32px'} padding='16px 32px' back_color='rgb(229 229 220)'>
               <Title level={5} style={{ color: 'red' }}>
-                In Red text in The Map you'll see Total Water Discharge Quanitity per Marz
+                In Red text in The Map you'll see Total Water Discharge Quantity per Marz
               </Title>
               <Title level={5} style={{ color: 'green' }}>
-                In Grenn text in The Map you'll see Total Water Intake Quanitity per Marz
+                In Green text in The Map you'll see Total Water Intake Quantity per Marz
               </Title>
               <Title level={5} style={{ color: 'black' }}>
                 In Black text in The Map you'll see Total Water Sources Quantity per Marz
               </Title>
-              <MapContainer
-                center={[40.1792, 44.4991]}
-                zoom={8}
-                style={{ height: '600px', width: '100%' }}
-                key='stable-map-key'
-              >
-                <Suspense>
-                  <TileLayer
-                    url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  />
-                  <GeoJSON
-                    data={geojsonData}
-                    style={{
-                      color: '#3388ff',
-                      weight: 2,
-                      fillOpacity: 0.2,
-                    }}
-                  />
-                  <ProvinceLabels data={geojsonData} marzData={sepetetedDataPerMarz} />
-                </Suspense>
-              </MapContainer>
+              <DashboardMap separatedDataPerMarz={separatedDataPerMarz} />
               <Button
-                onClick={() => exportData(sepetetedDataPerMarz, 'marz')}
+                onClick={() => exportData(separatedDataPerMarz, 'marz')}
                 margin={'32px 0 0 0'}
               >
                 Export Data
@@ -510,141 +315,38 @@ const GuestDashboard = () => {
           </Col>
           <Col span={24}>
             <Title level={3}>
-              Data presnetetion per Marz and BMO <b>please Hover the Charts for Data</b>
+              Data presentation per Marz and BMO <b>please Hover the Charts for Data</b>
             </Title>
             <Col span={24} border_radius={'32px'} padding='16px 32px' back_color='rgb(229 229 220)'>
               <Spin spinning={charLoading}>
-                <RangePicker
-                  picker='year'
-                  disabledDate={disabledDate}
-                  defaultValue={[rangeYears[0], rangeYears[rangeYears.length - 1]].map(el =>
-                    moment(el, 'YYYY')
-                  )}
-                  onChange={e => {
-                    setRangeYears(
-                      Array.from(
-                        {
-                          length:
-                            Number(moment(e[1]).format('YYYY')) -
-                            Number(moment(e[0]).format('YYYY')) +
-                            1,
-                        },
-                        (_, i) => Number(moment(e[0]).format('YYYY')) + i
-                      )
-                    );
-                    setChartData({});
+                <DashboardCharts
+                  {...{
+                    engBMO,
+                    setCharLoading,
+                    bmo,
+                    exportData,
+                    engBMOValues,
+                    disabledDate,
+                    notConnected,
                   }}
-                  width='200px'
-                  mb={10}
                 />
-                <Row gutter={[32, 32]}>
-                  <Col span={24}>
-                    <Title level={3}>Chart of BMOs Water Dischard Quantity</Title>
-                    <LineChart
-                      width={730}
-                      height={250}
-                      data={Object.entries(chartData).map(([key, value]) => ({
-                        name: key,
-                        ...value.dataDataWaterDischarge,
-                      }))}
-                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray='3 3' />
-                      <XAxis dataKey='name' />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      {[
-                        { name: 'Ախուրյան', color: 'black' },
-                        { name: 'Արարատյան', color: 'yellow' },
-                        { name: 'Հարավային', color: 'red' },
-                        { name: 'Հյուսիսային', color: 'blue' },
-                        { name: 'Հրազդան', color: 'pink' },
-                        { name: 'Սևան', color: 'orange' },
-                      ].map(el => (
-                        <Line type='monotone' dataKey={el.name} key={el.name} stroke={el.color} />
-                      ))}
-                    </LineChart>
-                  </Col>
-                  <Col span={24}>
-                    <Title level={3}>Chart of BMOs Water Intake Quantity</Title>
-                    <LineChart
-                      width={730}
-                      height={250}
-                      data={Object.entries(chartData).map(([key, value]) => ({
-                        name: key,
-                        ...value.dataWaterintakeQuanitity,
-                      }))}
-                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray='3 3' />
-                      <XAxis dataKey='name' />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      {[
-                        { name: 'Ախուրյան', color: 'black' },
-                        { name: 'Արարատյան', color: 'yellow' },
-                        { name: 'Հարավային', color: 'red' },
-                        { name: 'Հյուսիսային', color: 'blue' },
-                        { name: 'Հրազդան', color: 'pink' },
-                        { name: 'Սևան', color: 'orange' },
-                      ].map(el => (
-                        <Line type='monotone' dataKey={el.name} key={el.name} stroke={el.color} />
-                      ))}
-                    </LineChart>
-                  </Col>
-                  <Col span={24}>
-                    <Title level={3}>Chart of BMOs Water Permits Quantity</Title>
-                    <LineChart
-                      width={730}
-                      height={250}
-                      data={Object.entries(chartData).map(([key, value]) => ({
-                        name: key,
-                        ...value.permitsQuantity,
-                      }))}
-                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <CartesianGrid strokeDasharray='3 3' />
-                      <XAxis dataKey='name' />
-                      <YAxis />
-                      <Tooltip />
-                      <Legend />
-                      {[
-                        { name: 'Ախուրյան', color: 'black' },
-                        { name: 'Արարատյան', color: 'yellow' },
-                        { name: 'Հարավային', color: 'red' },
-                        { name: 'Հյուսիսային', color: 'blue' },
-                        { name: 'Հրազդան', color: 'pink' },
-                        { name: 'Սևան', color: 'orange' },
-                      ].map(el => (
-                        <Line type='monotone' dataKey={el.name} key={el.name} stroke={el.color} />
-                      ))}
-                    </LineChart>
-                  </Col>
-                  <Col span={24}>
-                    <Button onClick={() => exportData(chartData, 'chart')} margin={'32px 0 0 0'}>
-                      Export Data
-                    </Button>
-                  </Col>
-                </Row>
               </Spin>
             </Col>
           </Col>
           <Col span={24}>
             <Title level={3}>
-              Data presnetetion per Marz and BMO <b>please Hover the Charts for Data</b>
+              Data presentation per Marz and BMO <b>please Hover the Charts for Data</b>
             </Title>
             <Col span={24} border_radius={'32px'} padding='16px 32px' back_color='rgb(229 229 220)'>
               <Row gutter={[16, 16]}>
                 <Col span={12}>
-                  <Title level={4}>Pie represts Marzs and BMOs Water Discharge Quanitity</Title>
+                  <Title level={4}>Pie represents Marzs and BMOs Water Discharge Quantity</Title>
                   <ResponsiveContainer width='100%' height={200}>
                     <PieChart width='100%' height={200}>
                       <Pie
-                        data={Object.entries(globaledBmoData).map(([key, value]) => ({
+                        data={Object.entries(globalBmoData).map(([key, value]) => ({
                           name: key,
-                          value: Math.round(value.dataWaterDischargeQuanitity),
+                          value: Math.round(value.dataWaterDischargeQuantity),
                         }))}
                         dataKey='value'
                         cx='50%'
@@ -654,9 +356,9 @@ const GuestDashboard = () => {
                       />
                       <Tooltip content={<CustomTooltip />} />
                       <Pie
-                        data={Object.entries(sepetetedDataPerMarz).map(([key, value]) => ({
+                        data={Object.entries(separatedDataPerMarz).map(([key, value]) => ({
                           name: key,
-                          value: Math.round(value.dataWaterDischargeQuanitity),
+                          value: Math.round(value.dataWaterDischargeQuantity),
                         }))}
                         dataKey='value'
                         cx='50%'
@@ -669,13 +371,13 @@ const GuestDashboard = () => {
                   </ResponsiveContainer>
                 </Col>
                 <Col span={12}>
-                  <Title level={4}>Pie represts Marzs and BMOs Water Intake Quanitity</Title>
+                  <Title level={4}>Pie represents Marzs and BMOs Water Intake Quantity</Title>
                   <ResponsiveContainer width='100%' height={200}>
                     <PieChart width='100%' height={200}>
                       <Pie
-                        data={Object.entries(globaledBmoData).map(([key, value]) => ({
+                        data={Object.entries(globalBmoData).map(([key, value]) => ({
                           name: key,
-                          value: Math.round(value.dataWaterintakeQuanitity),
+                          value: Math.round(value.dataWaterIntakeQuantity),
                         }))}
                         dataKey='value'
                         cx='50%'
@@ -685,9 +387,9 @@ const GuestDashboard = () => {
                       />
                       <Tooltip content={<CustomTooltip />} />
                       <Pie
-                        data={Object.entries(sepetetedDataPerMarz).map(([key, value]) => ({
+                        data={Object.entries(separatedDataPerMarz).map(([key, value]) => ({
                           name: key,
-                          value: Math.round(value.dataWaterintakeQuanitity),
+                          value: Math.round(value.dataWaterIntakeQuantity),
                         }))}
                         dataKey='value'
                         cx='50%'
@@ -700,11 +402,11 @@ const GuestDashboard = () => {
                   </ResponsiveContainer>
                 </Col>
                 <Col span={12}>
-                  <Title level={4}>Pie represts Marzs and BMOs Water Sources Quanitity</Title>
+                  <Title level={4}>Pie represents Marzs and BMOs Water Sources Quantity</Title>
                   <ResponsiveContainer width='100%' height={200}>
                     <PieChart width='100%' height={200}>
                       <Pie
-                        data={Object.entries(globaledBmoData).map(([key, value]) => ({
+                        data={Object.entries(globalBmoData).map(([key, value]) => ({
                           name: key,
                           value: Math.round(value.dataResourcesWaterSourcesLength),
                         }))}
@@ -714,9 +416,12 @@ const GuestDashboard = () => {
                         outerRadius={60}
                         fill='#8884d8'
                       />
-                      <Tooltip content={<CustomTooltip continuem={false} />} continuem={false} />
+                      <Tooltip
+                        content={<CustomTooltip detailedSource={false} />}
+                        detailedSource={false}
+                      />
                       <Pie
-                        data={Object.entries(sepetetedDataPerMarz).map(([key, value]) => ({
+                        data={Object.entries(separatedDataPerMarz).map(([key, value]) => ({
                           name: key,
                           value: Math.round(value.dataResourcesWaterSourcesLength),
                         }))}
@@ -731,11 +436,11 @@ const GuestDashboard = () => {
                   </ResponsiveContainer>
                 </Col>
                 <Col span={12}>
-                  <Title level={4}>Pie represts BMOs Water Consumption Quanitity</Title>
+                  <Title level={4}>Pie represents BMOs Water Consumption Quantity</Title>
                   <ResponsiveContainer width='100%' height={200}>
                     <PieChart width='100%' height={200}>
                       <Pie
-                        data={Object.entries(globaledBmoData).map(([key, value]) => ({
+                        data={Object.entries(globalBmoData).map(([key, value]) => ({
                           name: key,
                           value: Math.round(value.TotalJrar),
                         }))}
@@ -750,11 +455,11 @@ const GuestDashboard = () => {
                   </ResponsiveContainer>
                 </Col>
                 <Col span={12}>
-                  <Title level={4}>Pie represts BMOs removing the water intake Quanitity</Title>
+                  <Title level={4}>Pie represents BMOs removing the water intake Quantity</Title>
                   <ResponsiveContainer width='100%' height={200}>
                     <PieChart width='100%' height={200}>
                       <Pie
-                        data={Object.entries(globaledBmoData).map(([key, value]) => ({
+                        data={Object.entries(globalBmoData).map(([key, value]) => ({
                           name: key,
                           value: Math.round(value.TotalJrarHeracum),
                         }))}
@@ -769,13 +474,13 @@ const GuestDashboard = () => {
                   </ResponsiveContainer>
                 </Col>
                 <Col span={12}>
-                  <Title level={4}>Pie represts BMOs permits Quanitity</Title>
+                  <Title level={4}>Pie represents BMOs permits Quantity</Title>
                   <ResponsiveContainer width='100%' height={200}>
                     <PieChart width='100%' height={200}>
                       <Pie
-                        data={Object.entries(globaledBmoData).map(([key, value]) => ({
+                        data={Object.entries(globalBmoData).map(([key, value]) => ({
                           name: key,
-                          value: Math.round(value.totalPermists),
+                          value: Math.round(value.totalPermits),
                         }))}
                         dataKey='value'
                         cx='50%'
@@ -783,15 +488,18 @@ const GuestDashboard = () => {
                         outerRadius={60}
                         fill='#8884d8'
                       />
-                      <Tooltip content={<CustomTooltip continuem={false} />} continuem={false} />
+                      <Tooltip
+                        content={<CustomTooltip detailedSource={false} />}
+                        detailedSource={false}
+                      />
                     </PieChart>
                   </ResponsiveContainer>
                 </Col>
                 <Col span={24}>
-                  <Title level={4}>All Water Resouces Names</Title>
+                  <Title level={4}>All Water Resources Names</Title>
                   <Paragraph fw={700}>Per BMO -- </Paragraph>
-                  {Object.entries(globaledBmoData).length
-                    ? Object.entries(globaledBmoData).map(([key, value]) => (
+                  {Object.entries(globalBmoData).length
+                    ? Object.entries(globalBmoData).map(([key, value]) => (
                         <div style={{ marginTop: 5 }} key={key}>
                           <br></br>
                           <b>{key}</b>--
@@ -803,8 +511,8 @@ const GuestDashboard = () => {
                       ))
                     : ''}
                   <Paragraph fw={700}>Per Marz --</Paragraph>
-                  {Object.entries(sepetetedDataPerMarz).length
-                    ? Object.entries(sepetetedDataPerMarz).map(([key, value]) => (
+                  {Object.entries(separatedDataPerMarz).length
+                    ? Object.entries(separatedDataPerMarz).map(([key, value]) => (
                         <div style={{ marginTop: 5 }} key={key}>
                           <br></br>
                           <b>{key}</b>--
@@ -816,7 +524,7 @@ const GuestDashboard = () => {
                       ))
                     : ''}
                 </Col>
-                <Button onClick={() => exportData(globaledBmoData, 'BMO')} margin={'32px 0 0 0'}>
+                <Button onClick={() => exportData(globalBmoData, 'BMO')} margin={'32px 0 0 0'}>
                   Export Data
                 </Button>
               </Row>
