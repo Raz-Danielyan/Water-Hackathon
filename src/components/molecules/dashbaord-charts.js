@@ -218,95 +218,101 @@ const DashboardCharts = ({
         mb={10}
       />
       <Row gutter={[32, 32]}>
-        <Col span={24} height='250px'>
+        <Col span={24}>
           <Title level={3}>Chart of BMOs Water Discharge Quantity</Title>
-          <ResponsiveContainer>
-            <LineChart
-              width={730}
-              height={250}
-              data={Object.entries(chartData).map(([key, value]) => ({
-                name: key,
-                ...value.dataDataWaterDischarge,
-              }))}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray='3 3' />
-              <XAxis dataKey='name' />
-              <YAxis />
-              <Tooltip content={<CustomLineTooltip />} />
-              <Legend />
-              {[
-                { name: [0], color: 'black' },
-                { name: engBMOValues[1], color: 'yellow' },
-                { name: engBMOValues[2], color: 'red' },
-                { name: engBMOValues[3], color: 'blue' },
-                { name: engBMOValues[4], color: 'pink' },
-                { name: engBMOValues[5], color: 'orange' },
-              ].map(el => (
-                <Line type='monotone' dataKey={el.name} key={el.name} stroke={el.color} />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
+          <div style={{ width: '100%', height: '300px' }}>
+            <ResponsiveContainer>
+              <LineChart
+                width={730}
+                height={250}
+                data={Object.entries(chartData).map(([key, value]) => ({
+                  name: key,
+                  ...value.dataDataWaterDischarge,
+                }))}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis dataKey='name' />
+                <YAxis />
+                <Tooltip content={<CustomLineTooltip />} />
+                <Legend />
+                {[
+                  { name: [0], color: 'black' },
+                  { name: engBMOValues[1], color: 'yellow' },
+                  { name: engBMOValues[2], color: 'red' },
+                  { name: engBMOValues[3], color: 'blue' },
+                  { name: engBMOValues[4], color: 'pink' },
+                  { name: engBMOValues[5], color: 'orange' },
+                ].map(el => (
+                  <Line type='monotone' dataKey={el.name} key={el.name} stroke={el.color} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </Col>
-        <Col span={24} height='250px'>
+        <Col span={24}>
           <Title level={3}>Chart of BMOs Water Intake Quantity</Title>
-          <ResponsiveContainer>
-            <LineChart
-              width={730}
-              height={250}
-              data={Object.entries(chartData).map(([key, value]) => ({
-                name: key,
-                ...value.dataWaterIntakeQuantity,
-              }))}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray='3 3' />
-              <XAxis dataKey='name' />
-              <YAxis />
-              <Tooltip content={<CustomLineTooltip />} />
-              <Legend />
-              {[
-                { name: engBMOValues[0], color: 'black' },
-                { name: engBMOValues[1], color: 'yellow' },
-                { name: engBMOValues[2], color: 'red' },
-                { name: engBMOValues[3], color: 'blue' },
-                { name: engBMOValues[4], color: 'pink' },
-                { name: engBMOValues[5], color: 'orange' },
-              ].map(el => (
-                <Line type='monotone' dataKey={el.name} key={el.name} stroke={el.color} />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
+          <div style={{ width: '100%', height: '300px' }}>
+            <ResponsiveContainer>
+              <LineChart
+                width={730}
+                height={250}
+                data={Object.entries(chartData).map(([key, value]) => ({
+                  name: key,
+                  ...value.dataWaterIntakeQuantity,
+                }))}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis dataKey='name' />
+                <YAxis />
+                <Tooltip content={<CustomLineTooltip />} />
+                <Legend />
+                {[
+                  { name: engBMOValues[0], color: 'black' },
+                  { name: engBMOValues[1], color: 'yellow' },
+                  { name: engBMOValues[2], color: 'red' },
+                  { name: engBMOValues[3], color: 'blue' },
+                  { name: engBMOValues[4], color: 'pink' },
+                  { name: engBMOValues[5], color: 'orange' },
+                ].map(el => (
+                  <Line type='monotone' dataKey={el.name} key={el.name} stroke={el.color} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </Col>
-        <Col span={24} height='250px'>
+        <Col span={24}>
           <Title level={3}>Chart of BMOs Water Permits Quantity</Title>
-          <ResponsiveContainer>
-            <LineChart
-              width={730}
-              height={250}
-              data={Object.entries(chartData).map(([key, value]) => ({
-                name: key,
-                ...value.permitsQuantity,
-              }))}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray='3 3' />
-              <XAxis dataKey='name' />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              {[
-                { name: engBMOValues[0], color: 'black' },
-                { name: engBMOValues[1], color: 'yellow' },
-                { name: engBMOValues[2], color: 'red' },
-                { name: engBMOValues[3], color: 'blue' },
-                { name: engBMOValues[4], color: 'pink' },
-                { name: engBMOValues[5], color: 'orange' },
-              ].map(el => (
-                <Line type='monotone' dataKey={el.name} key={el.name} stroke={el.color} />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
+          <div style={{ width: '100%', height: '300px' }}>
+            <ResponsiveContainer>
+              <LineChart
+                width={730}
+                height={250}
+                data={Object.entries(chartData).map(([key, value]) => ({
+                  name: key,
+                  ...value.permitsQuantity,
+                }))}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray='3 3' />
+                <XAxis dataKey='name' />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                {[
+                  { name: engBMOValues[0], color: 'black' },
+                  { name: engBMOValues[1], color: 'yellow' },
+                  { name: engBMOValues[2], color: 'red' },
+                  { name: engBMOValues[3], color: 'blue' },
+                  { name: engBMOValues[4], color: 'pink' },
+                  { name: engBMOValues[5], color: 'orange' },
+                ].map(el => (
+                  <Line type='monotone' dataKey={el.name} key={el.name} stroke={el.color} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </Col>
         <Col span={24}>
           <Button onClick={() => exportData(chartData, 'chart')} margin={'32px 0 0 0'}>
